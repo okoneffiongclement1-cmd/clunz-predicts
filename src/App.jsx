@@ -13,7 +13,7 @@ export default function App() {
     { time: "22:04:12", msg: "SECURE API LINK CALIBRATED TO PORT: LIVE" }
   ]);
 
-  const BACKEND_URL = "https://clunz.vercel.app";
+  const BACKEND_URL = "https://clunz.vercel.app/api/predictions";
 
   const pushLog = (message) => {
     const stamp = new Date().toTimeString().split(' ')[0];
