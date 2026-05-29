@@ -2,6 +2,11 @@ import express from 'express';
 import axios from 'axios';
 import cors from 'cors';
 
+const cors = require('cors');
+
+// Add this right after you initialize your app (const app = express();)
+app.use(cors({ origin: '*' })); // This completely opens the gate for your Vercel frontend
+
 const app = express();
 app.use(cors());
 
@@ -19,18 +24,15 @@ function runHighCertaintyAnalysis(game) {
 
     // 1. DYNAMIC MARKET SHIFTING BASED ON LIVE CONDITIONS
     if (Math.abs(homeWinPct - awayWinPct) > 0.180) {
-        // SCENARIO A: Complete Mismatch. We take a run line option.
         const favorite = homeWinPct > awayWinPct ? homeName : awayName;
         selection = `${favorite} (+1.5 Run Handicap)`;
         probability = 84.7;
         reasoning = `Massive seasonal variance detected (${Math.abs(homeWinPct - awayWinPct).toFixed(3)}). Run handicap safety net deployed.`;
     } else if (homeWinPct > 0.530 && awayWinPct > 0.530) {
-        // SCENARIO B: Clash of Titans. Both teams have elite pitching staffs.
         selection = "Total Runs Under 11.5";
         probability = 81.2;
         reasoning = "Dual high-efficiency pitching rotations. Probability algorithm heavily shifts towards low-scoring alternative market.";
     } else {
-        // SCENARIO C: Regular Matchup. We look at the "Team to Score First" matrix.
         const homePitcher = game.teams?.home?.probablePitcher;
         const firstInningEdge = (homeWinPct > awayWinPct) || homePitcher;
         
@@ -42,7 +44,7 @@ function runHighCertaintyAnalysis(game) {
     }
 
     return {
-        winner: selection, // This overrides your existing UI card text beautifully!
+        winner: selection,
         probability: `${probability}%`,
         confidence: "HIGH 🔥",
         reasoning: reasoning
@@ -57,7 +59,7 @@ app.get('/api/predictions', async (req, res) => {
         const dd = String(today.getDate()).padStart(2, '0');
         const formattedDate = `${yyyy}-${mm}-${dd}`;
 
-        console.log(`\n[CLUNZ HIGH CERTAINTY ENGINE]: Calculating 80%+ Metrics for: ${formattedDate}`);
+        console.log(`\n[CLUNZ SORT ENGINE]: Calculating & sorting metrics for: ${formattedDate}`);
 
         const response = await axios.get('https://statsapi.mlb.com/api/v1/schedule', {
             params: {
@@ -78,6 +80,7 @@ app.get('/api/predictions', async (req, res) => {
             }]);
         }
 
+        // 1. Map raw games into our uniform prediction format
         const predictions = games.map(game => {
             const state = game.status?.abstractGameState || "Scheduled";
             let timelineTag = "SCHEDULED PREVIEW";
@@ -92,16 +95,24 @@ app.get('/api/predictions', async (req, res) => {
             };
         });
 
+        // 2. THE SORT MATRIX: Sort descending based on numerical probability value
+        predictions.sort((a, b) => {
+            const probA = parseFloat(a.analysis.probability);
+            const probB = parseFloat(b.analysis.probability);
+            return probB - probA; // Highest percentages slide to index [0]
+        });
+
+        console.log(`[CLUNZ SORT ENGINE]: Successfully ranked ${predictions.length} games by highest calculated certainty.`);
         res.json(predictions);
     } catch (error) {
-        console.error("High Certainty Core Failure:", error.message);
-        res.status(500).json({ error: "High certainty processing failed." });
+        console.error("Sorting Matrix Failure:", error.message);
+        res.status(500).json({ error: "Adaptive sort processing loop failed." });
     }
 });
 
 app.listen(3001, () => {
     console.log('\n=========================================');
-    console.log('🔥 CLUNZ PREDICTS: 80%+ TARGET ENGINE ONLINE');
-    console.log('📊 STREAM: Adaptive Alternative Selections');
+    console.log('🔥 CLUNZ PREDICTS: DESCENDING RANK MATRIX ONLINE');
+    console.log('📊 RANK SELECTION: Highest % → Lowest %');
     console.log('=========================================\n');
 });
