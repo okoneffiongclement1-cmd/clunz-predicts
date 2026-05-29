@@ -1,291 +1,525 @@
 /* ==========================================================================
-   CLUNZ PREDICTS ENGINE DESIGN SYSTEM
+   CORE SYSTEM VARIABLES & VIEWPORT LAYOUT
    ========================================================================== */
-
-/* 1. Global Reset & Core Canvas */
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
-
-body {
-  background-color: #0d0e12; /* Rich dark navy-black */
-  color: #e2e8f0; /* Crisp off-white */
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-.app-container {
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-}
-
-/* 2. Layout Header & Status Elements */
-.app-header {
-  background-color: #12141c;
-  border-bottom: 1px solid #1f2433;
-  padding: 2rem 1.5rem;
-  text-align: center;
-  position: relative;
-}
-
-.app-header h1 {
-  font-size: 2.5rem;
-  font-weight: 900;
-  letter-spacing: 2px;
-  color: #ffffff;
-  text-shadow: 0 0 10px rgba(0, 255, 133, 0.2);
-}
-
-.app-header .subtitle {
-  color: #00ff85; /* Cyber Neon Green */
-  font-weight: 700;
-  letter-spacing: 4px;
-  font-size: 0.9rem;
-  margin-top: 0.25rem;
-}
-
-.status-badge {
-  display: inline-flex;
-  align-items: center;
-  background-color: rgba(0, 255, 133, 0.06);
-  border: 1px solid rgba(0, 255, 133, 0.2);
-  color: #00ff85;
-  padding: 0.4rem 0.8rem;
-  border-radius: 4px;
-  font-size: 0.75rem;
-  font-weight: 700;
-  letter-spacing: 1px;
-  margin-top: 1rem;
-}
-
-.pulse-dot {
-  width: 6px;
-  height: 6px;
-  background-color: #00ff85;
-  border-radius: 50%;
-  margin-right: 6px;
-  box-shadow: 0 0 8px #00ff85;
-  animation: pulse 2s infinite ease-in-out;
-}
-
-/* 3. Main Operational Grid */
-.dashboard-grid {
-  flex: 1;
-  width: 100%;
-  max-width: 1300px;
-  margin: 0 auto;
-  padding: 2.5rem 1.5rem;
+   :root {
+    --neon-green: #00ff9d;
+    --dark-bg: #050505;
+    --glass: rgba(255, 255, 255, 0.03);
+    --border: rgba(255, 255, 255, 0.1);
+  }
   
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
-  gap: 1.5rem;
-}
-
-/* 4. The Analytics Cards */
-.prediction-card {
-  background-color: #12141c;
-  border: 1px solid #1f2433;
-  border-radius: 8px;
-  padding: 1.5rem;
-  display: flex;
-  flex-direction: column;
-  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.2s ease;
-}
-
-.prediction-card:hover {
-  transform: translateY(-2px);
-  border-color: #2b334a;
-}
-
-.card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 1.25rem;
-}
-
-/* Conviction States */
-.confidence-tag {
-  font-size: 0.7rem;
-  font-weight: 800;
-  letter-spacing: 1px;
-  padding: 0.3rem 0.6rem;
-  border-radius: 4px;
-}
-
-.confidence-tag.high {
-  background-color: rgba(0, 255, 133, 0.1);
-  color: #00ff85;
-  border: 1px solid rgba(0, 255, 133, 0.2);
-}
-
-.confidence-tag.medium {
-  background-color: rgba(0, 140, 255, 0.1);
-  color: #008cff; /* Electric Blue */
-  border: 1px solid rgba(0, 140, 255, 0.2);
-}
-
-.live-status-tag {
-  font-size: 0.7rem;
-  font-weight: 600;
-  color: #64748b;
-}
-
-.match-title {
-  font-size: 1.25rem;
-  font-weight: 700;
-  color: #ffffff;
-  line-height: 1.4;
-}
-
-.divider {
-  border: 0;
-  height: 1px;
-  background-color: #1f2433;
-  margin: 1.25rem 0;
-}
-
-/* 5. Analysis Context Blocks */
-.analysis-body {
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-}
-
-.analysis-body .label {
-  font-size: 0.75rem;
-  font-weight: 600;
-  color: #64748b;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.winner-pick {
-  font-size: 1.4rem;
-  font-weight: 800;
-  color: #ffffff;
-  letter-spacing: -0.3px;
-}
-
-/* Probability Visual Meters */
-.probability-container {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  margin-top: 0.25rem;
-}
-
-.probability-bar-bg {
-  flex: 1;
-  height: 6px;
-  background-color: #1f2433;
-  border-radius: 3px;
-  overflow: hidden;
-}
-
-.probability-bar-fill {
-  height: 100%;
-  background: linear-gradient(90deg, #008cff, #00ff85);
-  border-radius: 3px;
-}
-
-.probability-text {
-  font-size: 0.9rem;
-  font-weight: 700;
-  color: #ffffff;
-  font-family: monospace;
-  min-width: 45px;
-  text-align: right;
-}
-
-.reasoning-text {
-  font-size: 0.8rem;
-  color: #94a3b8;
-  line-height: 1.5;
-  background-color: #171b26;
-  padding: 0.6rem 0.8rem;
-  border-radius: 6px;
-  margin-top: 0.5rem;
-}
-
-.reasoning-text strong {
-  color: #64748b;
-  font-size: 0.75rem;
-  text-transform: uppercase;
-  display: block;
-  margin-bottom: 0.15rem;
-}
-
-/* 6. Base Interface State Overlays */
-.loading-state, .error-card {
-  max-width: 450px;
-  margin: 6rem auto;
-  padding: 2.5rem;
-  background-color: #12141c;
-  border: 1px solid #1f2433;
-  border-radius: 8px;
-  text-align: center;
-}
-
-.spinner {
-  width: 32px;
-  height: 32px;
-  border: 3px solid #1f2433;
-  border-top-color: #00ff85;
-  border-radius: 50%;
-  margin: 0 auto 1.25rem auto;
-  animation: spin 0.8s linear infinite;
-}
-
-.error-card {
-  border-color: rgba(239, 68, 68, 0.2);
-  background-color: rgba(239, 68, 68, 0.02);
-}
-
-.error-card h3 {
-  color: #ef4444;
-  margin-bottom: 0.5rem;
-}
-
-.error-card code {
-  background-color: #171b26;
-  padding: 0.2rem 0.4rem;
-  border-radius: 4px;
-  font-size: 0.85rem;
-}
-
-/* 7. Footer Ecosystem */
-.app-footer {
-  text-align: center;
-  padding: 2rem;
-  color: #475569;
-  font-size: 0.75rem;
-  border-top: 1px solid #1f2433;
-  margin-top: auto;
-  background-color: #0d0e12;
-}
-
-/* 8. Hardware Accelerated Animations */
-@keyframes pulse {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50% { opacity: 0.4; transform: scale(0.92); }
-}
-
-@keyframes spin {
-  to { transform: rotate(360deg); }
-}
-
-/* 9. Adaptive Media Controls */
-@media (max-width: 480px) {
+  .elite-viewport {
+    background: var(--dark-bg);
+    min-height: 100vh;
+    color: white;
+    font-family: 'Inter', sans-serif;
+    overflow: hidden;
+    position: relative;
+  }
+  
+  .grid-overlay {
+    position: absolute;
+    inset: 0;
+    background-image: linear-gradient(var(--border) 1px, transparent 1px), 
+                      linear-gradient(90deg, var(--border) 1px, transparent 1px);
+    background-size: 50px 50px;
+    mask-image: radial-gradient(circle, black, transparent 80%);
+    pointer-events: none;
+  }
+  
+  /* ==========================================================================
+     HEADER TERMINAL METRICS
+     ========================================================================== */
+  .elite-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 40px;
+    background: rgba(0, 0, 0, 0.8);
+    border-bottom: 1px solid var(--neon-green);
+    backdrop-filter: blur(10px);
+  }
+  
+  .logo-glitch {
+    font-size: 2rem;
+    font-weight: 900;
+    letter-spacing: 5px;
+    color: var(--neon-green);
+    text-shadow: 0 0 10px var(--neon-green);
+  }
+  
+  .matrix-status {
+    font-size: 11px;
+    font-family: monospace;
+    color: #666;
+    display: block;
+    margin-top: 4px;
+  }
+  
+  .header-actions { 
+    display: flex; 
+    align-items: center; 
+    gap: 24px; 
+  }
+  
+  .system-time { 
+    font-family: monospace; 
+    font-size: 13px; 
+  }
+  
+  .system-time .label { 
+    color: #666; 
+    margin-right: 6px; 
+  }
+  
+  .system-time .value { 
+    color: #fff; 
+  }
+  
+  .glow-btn {
+    background: transparent;
+    border: 1px solid var(--neon-green);
+    color: var(--neon-green);
+    padding: 10px 20px;
+    font-weight: bold;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: 0.3s ease;
+    box-shadow: 0 0 10px rgba(0, 255, 157, 0.2);
+  }
+  
+  .glow-btn:hover {
+    background: var(--neon-green);
+    color: #000;
+    box-shadow: 0 0 20px var(--neon-green);
+  }
+  
+  /* ==========================================================================
+     DASHBOARD PRIMARY INTERFACE GRID
+     ========================================================================== */
   .dashboard-grid {
-    grid-template-columns: 1fr;
-    padding: 1.5rem 1rem;
+    display: grid;
+    grid-template-columns: 380px 1fr;
+    height: calc(100vh - 84px);
   }
-  .app-header h1 {
-    font-size: 1.8rem;
+  
+  /* Left Feed Panel */
+  .feed-column {
+    border-right: 1px solid var(--border);
+    background: rgba(255, 255, 255, 0.01);
+    padding: 20px;
+    overflow-y: auto;
   }
-}
+  
+  .section-header h3 { 
+    font-size: 14px; 
+    letter-spacing: 1px; 
+    color: #888; 
+    margin-bottom: 20px; 
+  }
+  
+  .filter-command-panel { 
+    display: flex; 
+    flex-direction: column; 
+    gap: 10px; 
+    margin-bottom: 20px; 
+  }
+  
+  .matrix-search-input {
+    background: #000; 
+    border: 1px solid var(--border); 
+    color: #fff;
+    padding: 12px; 
+    font-family: monospace; 
+    font-size: 11px; 
+    border-radius: 4px; 
+    letter-spacing: 1px; 
+    outline: none;
+    width: 100%;
+    box-sizing: border-box;
+  }
+  
+  .matrix-search-input:focus { 
+    border-color: var(--neon-green); 
+  }
+  
+  /* Prediction Feed Items */
+  .prediction-tile {
+    background: var(--glass); 
+    border: 1px solid var(--border);
+    margin-bottom: 15px; 
+    padding: 18px; 
+    border-radius: 4px;
+    display: flex; 
+    align-items: center; 
+    gap: 15px; 
+    cursor: pointer; 
+    transition: 0.3s;
+  }
+  
+  .prediction-tile:hover, .prediction-tile.active { 
+    border-color: var(--neon-green); 
+    background: rgba(0, 255, 157, 0.04); 
+  }
+  
+  .tile-rank { 
+    font-family: monospace; 
+    color: var(--neon-green); 
+    font-weight: bold; 
+  }
+  
+  .tile-content { 
+    flex: 1; 
+  }
+  
+  .tile-match { 
+    font-weight: 600; 
+    font-size: 15px; 
+  }
+  
+  .tile-prob-bar { 
+    height: 4px; 
+    width: 100%; 
+    background: #111; 
+    margin-top: 8px; 
+  }
+  
+  .tile-prob-bar .fill { 
+    height: 100%; 
+    background: var(--neon-green); 
+    box-shadow: 0 0 8px var(--neon-green); 
+  }
+  
+  .tile-pct { 
+    font-family: monospace; 
+    font-weight: bold; 
+    color: #fff; 
+  }
+  
+  /* ==========================================================================
+     CENTER HUB SPLIT & REPORT ARTIFACTS
+     ========================================================================== */
+  .analysis-column { 
+    padding: 40px; 
+    background: #090909; 
+    overflow-y: auto; 
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  
+  .analysis-inner-split {
+    display: grid;
+    grid-template-columns: 1fr 320px;
+    gap: 30px;
+    margin-bottom: 30px;
+  }
+  
+  .tactical-view { 
+    background: var(--glass); 
+    border: 1px solid var(--border); 
+    padding: 40px; 
+    min-height: 100%; 
+    border-radius: 8px; 
+    position: relative; 
+    overflow: hidden; 
+    box-sizing: border-box;
+  }
+  
+  .scan-line {
+    position: absolute; 
+    top: 0; 
+    left: 0; 
+    width: 100%; 
+    height: 2px;
+    background: var(--neon-green); 
+    opacity: 0.2; 
+    animation: scan 6s linear infinite;
+  }
+  
+  .view-header { 
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center; 
+    border-bottom: 1px solid var(--border); 
+    padding-bottom: 20px; 
+    margin-bottom: 30px; 
+  }
+  
+  .view-header h2 { 
+    font-size: 18px; 
+    letter-spacing: 2px; 
+    color: #888; 
+  }
+  
+  .view-header .tag { 
+    background: rgba(0, 255, 157, 0.1); 
+    color: var(--neon-green); 
+    padding: 4px 10px; 
+    font-size: 12px; 
+    font-family: monospace; 
+  }
+  
+  .big-selection .label { 
+    font-size: 12px; 
+    color: #555; 
+    letter-spacing: 2px; 
+    display: block; 
+  }
+  
+  .big-selection .value { 
+    font-size: 3.2rem; 
+    font-weight: 900; 
+    color: white; 
+    margin: 10px 0 30px 0; 
+    text-transform: uppercase; 
+  }
+  
+  /* Situational Context Flags */
+  .situational-matrix {
+    margin-bottom: 25px;
+  }
+  
+  .matrix-title-label {
+    font-family: monospace;
+    font-size: 10px;
+    color: #444;
+    display: block;
+    margin-bottom: 8px;
+  }
+  
+  .flag-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  
+  .flag-badge {
+    font-family: monospace;
+    font-size: 10px;
+    font-weight: bold;
+    padding: 4px 10px;
+    border-radius: 4px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+  }
+  
+  .flag-badge.alert { background: rgba(255, 170, 0, 0.05); color: #ffaa00; border-color: rgba(255, 170, 0, 0.2); }
+  .flag-badge.system { background: rgba(0, 150, 255, 0.05); color: #0096ff; border-color: rgba(0, 150, 255, 0.2); }
+  .flag-badge.custom { background: rgba(0, 255, 157, 0.05); color: var(--neon-green); border-color: rgba(0, 255, 157, 0.2); }
+  
+  /* Value Probability Readouts */
+  .market-edge-container {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+    margin-bottom: 35px;
+  }
+  
+  .edge-metric-box {
+    background: rgba(0, 0, 0, 0.4);
+    border: 1px solid var(--border);
+    padding: 16px;
+    border-radius: 6px;
+  }
+  
+  .edge-title {
+    font-family: monospace;
+    font-size: 10px;
+    color: #555;
+    display: block;
+    margin-bottom: 6px;
+    letter-spacing: 0.5px;
+  }
+  
+  .edge-value {
+    font-size: 22px;
+    font-weight: bold;
+  }
+  
+  .edge-value.neon { color: var(--neon-green); }
+  .edge-value.advantage { color: #fff; text-shadow: 0 0 10px rgba(0, 255, 157, 0.4); }
+  
+  .verification-header-accent { 
+    font-size: 12px; 
+    color: var(--neon-green); 
+    font-family: monospace; 
+    margin-bottom: 12px; 
+  }
+  
+  .reasoning-box { 
+    background: rgba(0, 0, 0, 0.4); 
+    border: 1px solid var(--border); 
+    padding: 24px; 
+    border-radius: 6px; 
+    line-height: 1.6; 
+    color: #ccc; 
+  }
+  
+  /* ==========================================================================
+     SIDE COMPONENT MODULES (CHARTS & LEDGERS)
+     ========================================================================== */
+  .side-metric-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  
+  /* Live Telemetry Mini-Charts */
+  .telemetry-chart-box {
+    background: var(--glass);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 20px;
+  }
+  
+  .chart-stat-row {
+    margin-bottom: 12px;
+  }
+  
+  .chart-stat-row:last-child { 
+    margin-bottom: 0; 
+  }
+  
+  .chart-label {
+    font-family: monospace;
+    font-size: 9px;
+    color: #666;
+    margin-bottom: 4px;
+  }
+  
+  .mini-chart-track {
+    height: 4px;
+    background: #111;
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  
+  .mini-chart-fill {
+    height: 100%;
+    background: #fff;
+    opacity: 0.8;
+    box-shadow: 0 0 6px rgba(255, 255, 255, 0.3);
+  }
+  
+  /* Win/Loss Settled Ledger */
+  .settlement-ledger-container {
+    background: var(--glass);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 20px;
+  }
+  
+  .ledger-header {
+    font-family: monospace;
+    font-size: 11px;
+    color: #555;
+    letter-spacing: 1px;
+    margin-bottom: 15px;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 8px;
+  }
+  
+  .ledger-table {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  
+  .ledger-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 12px;
+    padding: 8px;
+    background: rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.02);
+    border-radius: 4px;
+  }
+  
+  .ledger-row.head {
+    background: transparent;
+    border: none;
+    font-family: monospace;
+    font-size: 10px;
+    color: #444;
+    padding-bottom: 0;
+  }
+  
+  .ledger-row span {
+    font-weight: 500;
+  }
+  
+  .ledger-row .status {
+    font-family: monospace;
+    font-weight: bold;
+    font-size: 10px;
+    padding: 2px 6px;
+    border-radius: 2px;
+  }
+  
+  .ledger-row .status.win {
+    background: rgba(0, 255, 157, 0.1);
+    color: var(--neon-green);
+  }
+  
+  .ledger-row .status.lose {
+    background: rgba(255, 0, 85, 0.1);
+    color: #ff0055;
+  }
+  
+  /* ==========================================================================
+     SYSTEM LOG DIAGNOSTIC DRIVER
+     ========================================================================== */
+  .terminal-log-drawer {
+    background: #020202;
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--neon-green);
+    border-radius: 4px;
+    padding: 16px;
+    font-family: monospace;
+    margin-top: auto;
+  }
+  
+  .terminal-title {
+    font-size: 11px;
+    color: #444;
+    margin-bottom: 10px;
+    letter-spacing: 1px;
+  }
+  
+  .terminal-body {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  
+  .log-line {
+    font-size: 11px;
+    line-height: 1.4;
+  }
+  
+  .log-time {
+    color: #666;
+    margin-right: 12px;
+  }
+  
+  .log-msg {
+    color: #aaa;
+    letter-spacing: 0.5px;
+  }
+  
+  /* Placeholder Empty Box Viewports */
+  .empty-tactical { 
+    display: flex; 
+    justify-content: center; 
+    align-items: center; 
+    height: 100%; 
+    color: #444; 
+    font-family: monospace; 
+  }
+  
+  /* Dynamic Render Animations */
+  @keyframes scan { 
+    from { top: -5%; } 
+    to { top: 105%; } 
+  }
