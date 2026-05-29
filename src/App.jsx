@@ -7,7 +7,7 @@ function App() {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    fetch('http://localhost:3001/api/predictions')
+    fetch('https://clunz-predicts-76dy.onrender.com/api/predictions')
       .then((res) => {
         if (!res.ok) {
           throw new Error('Failed to connect to the CLUNZ engine backend.');
